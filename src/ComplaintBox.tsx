@@ -5,14 +5,13 @@ import { useRootStore } from "./App";
 import {
   Button,
   DropdownInputField,
-  Icon,
   TextAreaInputField,
   TextInputField,
   useSpacing,
   useTypography,
 } from "@surya-digital/leo-reactjs-material-ui";
 import { useTranslation } from "react-i18next";
-import { DateTime } from "luxon";
+// import { DateTime } from "luxon";
 
 export const ComplaintBox = observer((): React.ReactElement => {
   const {
@@ -56,13 +55,34 @@ export const ComplaintBox = observer((): React.ReactElement => {
     window.localStorage.setItem("complaint", complaint);
   }, [complaint]);
 
-  let dt = DateTime.fromISO(createdAt)
-    .setLocale("en-GB")
-    .toLocaleString({ month: "long", day: "numeric", year: "numeric" });
+  // let dt = DateTime.fromISO(createdAt)
+  //   .setLocale("en-GB")
+  //   .toLocaleString({ month: "long", day: "numeric", year: "numeric" });
 
   const displayUsers = users.map((user) => (
     <li key={user.name}>
-      {dt} | {user.name} | {user.mail} | {user.complaint}
+      <Typography sx={{ typography: typography.c1 }}>
+        {t("name")}: {user.name}
+      </Typography>
+      <Typography sx={{ typography: typography.c1 }}>
+        {t("email")}: {user.mail}
+      </Typography>
+      <Typography sx={{ typography: typography.c1 }}>
+        {t("serviceType")}: {selectedType}
+      </Typography>
+      <Typography sx={{ typography: typography.c1 }}>
+        {t("complaint")}: {user.complaint}
+      </Typography>
+      <Typography sx={{ typography: typography.c1 }}>
+        Date:{" "}
+        {t("intlDate", {
+          val: createdAt,
+          formatParams: {
+            val: { year: "numeric", month: "short", day: "numeric" },
+          },
+        })}
+        {/* {t("intlDate", { createdAt })} */}
+      </Typography>
     </li>
   ));
 
@@ -91,6 +111,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
           borderLeftColor: { md: "silver", xs: "white" },
           pl: { md: 16, xs: 2 },
           borderTopColor: { md: "white", xs: "silver" },
+          width: "540px",
         }}
       >
         <Typography
@@ -161,8 +182,6 @@ export const ComplaintBox = observer((): React.ReactElement => {
             onClick={() => handleSubmit()}
             label={t("submit")}
             name={"submit-button"}
-            icon={<Icon type="chevron-right" color="white" />}
-            iconPosition="trailing"
           />
         </Box>
         <Typography sx={{ fontSize: spacing.spaceSM }}>**{t("tnc")}</Typography>

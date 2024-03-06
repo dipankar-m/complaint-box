@@ -1,4 +1,4 @@
-import { DateTime } from "luxon";
+// import { DateTime } from "luxon";
 import { types } from "mobx-state-tree";
 
 const validateMail = (str: string): boolean => {
@@ -14,7 +14,7 @@ const User = types.model({
   selectedType: types.maybeNull(
     types.enumeration(["Service related", "Product related"])
   ),
-  createdAt: types.string,
+  createdAt: types.maybe(types.Date),
 });
 
 export const RootStore = types
@@ -25,7 +25,7 @@ export const RootStore = types
     selectedType: types.maybeNull(
       types.enumeration(["Service related", "Product related"])
     ),
-    createdAt: types.string,
+    createdAt: types.maybe(types.Date),
     nameError: types.boolean,
     mailError: types.boolean,
     complaintError: types.boolean,
@@ -48,7 +48,7 @@ export const RootStore = types
       if (value.length > 50) this.setComplaintError(true);
       else this.setComplaintError(false);
     },
-    setDate(value: string) {
+    setDate(value: Date) {
       self.createdAt = value;
     },
     setNameError(value: boolean) {
@@ -68,7 +68,7 @@ export const RootStore = types
       mail: string;
       complaint: string;
       selectedType: string | null;
-      createdAt: string;
+      createdAt: Date | undefined;
     }) {
       self.users.push(value);
     },
@@ -92,7 +92,7 @@ export const RootStore = types
           `Complaint registered successfully. It will be resolved soon by our correspondent.`
         );
 
-        let dt = DateTime.now().toISO();
+        let dt = new Date(Date.now());
         this.setDate(dt);
 
         let name = self.name;
