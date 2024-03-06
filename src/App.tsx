@@ -22,7 +22,8 @@ const App = () => {
     nameError: false,
     mailError: false,
     complaintError: false,
-    usersArr: [],
+    users: [],
+    createdAt: "",
   });
   return (
     <ThemeConfig currentTheme={"light"} themes={[lightTheme, darkTheme]}>

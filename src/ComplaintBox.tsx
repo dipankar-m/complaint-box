@@ -1,23 +1,40 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
-import { Box, Container, TextField, Typography } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import { useRootStore } from "./App";
-import { Button, Icon } from "@surya-digital/leo-reactjs-material-ui";
+import {
+  Button,
+  DropdownInputField,
+  Icon,
+  TextAreaInputField,
+  TextInputField,
+  useSpacing,
+  useTypography,
+} from "@surya-digital/leo-reactjs-material-ui";
+import { useTranslation } from "react-i18next";
+import { DateTime } from "luxon";
 
 export const ComplaintBox = observer((): React.ReactElement => {
   const {
     name,
     setName,
     mail,
+    selectedType,
+    createdAt,
+    setSelectedType,
     setMail,
     complaint,
     setComplaint,
     nameError,
     mailError,
     complaintError,
-    usersArr,
+    users,
     handleSubmit,
   } = useRootStore();
+
+  const spacing = useSpacing();
+  const typography = useTypography();
+  const { t } = useTranslation();
 
   useEffect(() => {
     let retrievedName = window.localStorage.getItem("name");
@@ -26,6 +43,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
     if (retrievedMail) setMail(retrievedMail);
     let retrievedComplaint = window.localStorage.getItem("complaint");
     if (retrievedComplaint) setComplaint(retrievedComplaint);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -38,9 +56,13 @@ export const ComplaintBox = observer((): React.ReactElement => {
     window.localStorage.setItem("complaint", complaint);
   }, [complaint]);
 
-  const complaintArray = usersArr.map((userComplaint) => (
-    <li key={userComplaint.name}>
-      {userComplaint.name} | {userComplaint.mail} | {userComplaint.complaint}
+  let dt = DateTime.fromISO(createdAt)
+    .setLocale("en-GB")
+    .toLocaleString({ month: "long", day: "numeric", year: "numeric" });
+
+  const displayUsers = users.map((user) => (
+    <li key={user.name}>
+      {dt} | {user.name} | {user.mail} | {user.complaint}
     </li>
   ));
 
@@ -59,84 +81,94 @@ export const ComplaintBox = observer((): React.ReactElement => {
         alt="Complaint Resolution Image"
         src="https://cdni.iconscout.com/illustration/premium/thumb/complaint-resolution-specialist-handling-customer-complaints-and-working-to-resolve-them-9026220-7342868.png"
       />
-      <Box
+      <Stack
         sx={{
-          padding: "20px 20px",
-          display: "flex",
-          flexDirection: "column",
+          padding: spacing.space3XL,
           alignItems: "center",
-          gap: 2,
+          gap: spacing.spaceLG,
           borderStyle: "solid",
           borderColor: "white",
           borderLeftColor: { md: "silver", xs: "white" },
           pl: { md: 16, xs: 2 },
-          borderTopColor: { md: "white", xs: "blue" },
+          borderTopColor: { md: "white", xs: "silver" },
         }}
       >
         <Typography
           sx={{
-            fontSize: "30px",
-            fontWeight: "medium",
+            typography: typography.h4,
           }}
-          variant="h1"
         >
-          Complaint Box!
+          {t("title")}
         </Typography>
-        <Typography sx={{ fontStyle: "italic" }}>
-          Get assured resolution within 24 hours**
+        <Typography
+          sx={{
+            typography: typography.b2,
+            fontStyle: "italic",
+            mb: spacing.spaceXL,
+          }}
+        >
+          {t("subTitle")}**
         </Typography>
-        <TextField
-          onChange={(e) => setName(e.target.value)}
-          fullWidth
-          required
+        <TextInputField
+          isRequired
+          name={"name"}
           value={name}
-          id="outlined-basic"
-          label="Name"
-          variant="standard"
-          sx={{ mt: 1 }}
+          type={"text"}
+          onTextChange={(name) => setName(name)}
+          label={t("name")}
+          maxCharacterLength={16}
           error={nameError}
-          helperText="Enter your name in 16 characters."
         />
-        <TextField
-          onChange={(e) => setMail(e.target.value)}
-          fullWidth
-          required
+        <TextInputField
+          isRequired
+          name={"mail"}
           value={mail}
-          id="outlined-basic"
-          label="Email"
-          variant="standard"
+          type={"text"}
+          onTextChange={(mail) => setMail(mail)}
+          label={t("email")}
           error={mailError}
         />
-        <TextField
-          onChange={(e) => setComplaint(e.target.value)}
-          fullWidth
-          required
-          value={complaint}
-          id="outlined-multiline-static"
-          label="Complaint"
-          variant="standard"
-          multiline
-          rows={4}
-          error={complaintError}
-          helperText="Enter your complaint in 50 characters."
+        <DropdownInputField
+          name={""}
+          label={t("type")}
+          value={selectedType!}
+          options={[
+            { name: "Service related", value: "Service related" },
+            { name: "Product related", value: "Product related" },
+          ]}
+          onSelect={(item) => setSelectedType(item.value)}
         />
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+        <TextAreaInputField
+          isRequired
+          name={"complaint"}
+          value={complaint}
+          onTextChange={(complaint) => setComplaint(complaint)}
+          label={t("complaint")}
+          error={complaintError}
+          maxCharacterLength={50}
+          numberOfRows={4}
+        />
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: spacing.spaceXL,
+          }}
+        >
           <Button
             size={"large"}
             variant={"filled"}
             onClick={() => handleSubmit()}
-            label={"Submit"}
-            name={""}
+            label={t("submit")}
+            name={"submit-button"}
             icon={<Icon type="chevron-right" color="white" />}
             iconPosition="trailing"
           />
         </Box>
-        <Typography sx={{ fontSize: "12px" }}>
-          **Excluding weekends and public holidays
-        </Typography>
-        <h3>{complaintArray.length > 0 ? "Active Tickets:" : ""}</h3>
-        <Typography>{complaintArray}</Typography>
-      </Box>
+        <Typography sx={{ fontSize: spacing.spaceSM }}>**{t("tnc")}</Typography>
+        <h3>{displayUsers.length > 0 ? `${t("tickets")}:` : ""}</h3>
+        <Typography>{displayUsers}</Typography>
+      </Stack>
     </Container>
   );
 });

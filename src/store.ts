@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { types } from "mobx-state-tree";
 
 const validateMail = (str: string): boolean => {
@@ -10,6 +11,10 @@ const User = types.model({
   name: types.string,
   mail: types.string,
   complaint: types.string,
+  selectedType: types.maybeNull(
+    types.enumeration(["Service related", "Product related"])
+  ),
+  createdAt: types.string,
 });
 
 export const RootStore = types
@@ -17,10 +22,14 @@ export const RootStore = types
     name: types.string,
     mail: types.string,
     complaint: types.string,
+    selectedType: types.maybeNull(
+      types.enumeration(["Service related", "Product related"])
+    ),
+    createdAt: types.string,
     nameError: types.boolean,
     mailError: types.boolean,
     complaintError: types.boolean,
-    usersArr: types.array(User),
+    users: types.array(User),
   })
   .actions((self) => ({
     setName(value: string) {
@@ -39,6 +48,9 @@ export const RootStore = types
       if (value.length > 50) this.setComplaintError(true);
       else this.setComplaintError(false);
     },
+    setDate(value: string) {
+      self.createdAt = value;
+    },
     setNameError(value: boolean) {
       self.nameError = value;
     },
@@ -48,8 +60,17 @@ export const RootStore = types
     setComplaintError(value: boolean) {
       self.complaintError = value;
     },
-    setUsersArr(value: { name: string; mail: string; complaint: string }) {
-      self.usersArr.push(value);
+    setSelectedType(value: string) {
+      self.selectedType = value;
+    },
+    setUsers(value: {
+      name: string;
+      mail: string;
+      complaint: string;
+      selectedType: string | null;
+      createdAt: string;
+    }) {
+      self.users.push(value);
     },
     handleSubmit() {
       console.log("handleSubmit called");
@@ -70,11 +91,17 @@ export const RootStore = types
         alert(
           `Complaint registered successfully. It will be resolved soon by our correspondent.`
         );
+
+        let dt = DateTime.now().toISO();
+        this.setDate(dt);
+
         let name = self.name;
         let mail = self.mail;
         let complaint = self.complaint;
+        let selectedType = self.selectedType;
+        let createdAt = self.createdAt;
 
-        this.setUsersArr({ name, mail, complaint });
+        this.setUsers({ name, mail, complaint, selectedType, createdAt });
 
         this.setName("");
         this.setMail("");
