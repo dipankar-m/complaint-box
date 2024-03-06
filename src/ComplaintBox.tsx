@@ -129,7 +129,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
           error={mailError}
         />
         <DropdownInputField
-          name={""}
+          name={"complaint-type"}
           label={t("type")}
           value={selectedType!}
           options={[
