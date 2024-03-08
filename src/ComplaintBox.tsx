@@ -19,7 +19,6 @@ export const ComplaintBox = observer((): React.ReactElement => {
     setName,
     mail,
     selectedType,
-    createdAt,
     setSelectedType,
     setMail,
     complaint,
@@ -42,18 +41,20 @@ export const ComplaintBox = observer((): React.ReactElement => {
     if (retrievedMail) setMail(retrievedMail);
     let retrievedComplaint = window.localStorage.getItem("complaint");
     if (retrievedComplaint) setComplaint(retrievedComplaint);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setComplaint, setMail, setName]);
 
   useEffect(() => {
     if (name !== undefined) window.localStorage.setItem("name", name);
+    else window.localStorage.setItem("name", "");
   }, [name]);
   useEffect(() => {
     if (mail !== undefined) window.localStorage.setItem("mail", mail);
+    else window.localStorage.setItem("mail", "");
   }, [mail]);
   useEffect(() => {
     if (complaint !== undefined)
       window.localStorage.setItem("complaint", complaint);
+    else window.localStorage.setItem("complaint", "");
   }, [complaint]);
 
   const displayUsers = users.map((user) => (
@@ -62,7 +63,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
       <TicketDetails info={t("displayEmail", { val: user.mail })} />
       <TicketDetails info={t("serviceType", { val: user.selectedType })} />
       <TicketDetails info={t("displayComplaint", { val: user.complaint })} />
-      <TicketDetails info={t("intlDate", { createdAt })} />
+      <TicketDetails info={t("intlDate", { val: user.createdAt })} />
     </Stack>
   ));
 

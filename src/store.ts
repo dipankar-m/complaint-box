@@ -7,10 +7,10 @@ const validateMail = (str: string): boolean => {
 };
 
 const User = types.model({
-  name: types.string,
-  mail: types.string,
-  complaint: types.string,
-  selectedType: types.maybeNull(
+  name: types.maybe(types.string),
+  mail: types.maybe(types.string),
+  complaint: types.maybe(types.string),
+  selectedType: types.maybe(
     types.enumeration(["Service related", "Product related"])
   ),
   createdAt: types.maybe(types.Date),
@@ -21,7 +21,7 @@ export const RootStore = types
     name: types.maybe(types.string),
     mail: types.maybe(types.string),
     complaint: types.maybe(types.string),
-    selectedType: types.maybeNull(
+    selectedType: types.maybe(
       types.enumeration(["Service related", "Product related"])
     ),
     createdAt: types.maybe(types.Date),
@@ -31,20 +31,20 @@ export const RootStore = types
     users: types.array(User),
   })
   .actions((self) => ({
-    setName(value: string) {
+    setName(value: string | undefined) {
       self.name = value;
-      if (value.length > 16) this.setNameError(true);
+      if (value && value.length > 16) this.setNameError(true);
       else this.setNameError(false);
     },
-    setMail(value: string) {
+    setMail(value: string | undefined) {
       self.mail = value;
       if (value && !validateMail(value)) this.setMailError(true);
       else this.setMailError(false);
     },
 
-    setComplaint(value: string) {
+    setComplaint(value: string | undefined) {
       self.complaint = value;
-      if (value.length > 50) this.setComplaintError(true);
+      if (value && value.length > 50) this.setComplaintError(true);
       else this.setComplaintError(false);
     },
     setDate(value: Date) {
@@ -59,37 +59,24 @@ export const RootStore = types
     setComplaintError(value: boolean) {
       self.complaintError = value;
     },
-    setSelectedType(value: string | null) {
+    setSelectedType(value: string | undefined) {
       self.selectedType = value;
     },
     setUsers(value: {
       name: string;
       mail: string;
       complaint: string;
-      selectedType: string | null;
+      selectedType: string | undefined;
       createdAt: Date | undefined;
     }) {
       self.users.push(value);
     },
     handleSubmit() {
-      console.log("handleSubmit called");
+      if (!self.name) this.setNameError(true);
+      if (!self.mail) this.setMailError(true);
+      if (!self.complaint) this.setComplaintError(true);
 
-      if (self.name === "") this.setNameError(true);
-      if (self.mail === "") this.setMailError(true);
-      if (
-        self.complaint &&
-        (self.complaint === "" || self.complaint.length > 40)
-      )
-        this.setComplaintError(true);
-
-      if (
-        self.name &&
-        self.mail &&
-        self.complaint &&
-        !self.nameError &&
-        !self.mailError &&
-        !self.complaintError
-      ) {
+      if (!self.nameError && !self.mailError && !self.complaintError) {
         alert(
           `Complaint registered successfully. It will be resolved soon by our correspondent.`
         );
@@ -97,17 +84,17 @@ export const RootStore = types
         let dt = new Date(Date.now());
         this.setDate(dt);
 
-        let name = self.name;
-        let mail = self.mail;
-        let complaint = self.complaint;
+        let name = self.name!;
+        let mail = self.mail!;
+        let complaint = self.complaint!;
         let selectedType = self.selectedType;
         let createdAt = self.createdAt;
 
         this.setUsers({ name, mail, complaint, selectedType, createdAt });
 
-        this.setName("");
-        this.setMail("");
-        this.setComplaint("");
+        this.setName(undefined);
+        this.setMail(undefined);
+        this.setComplaint(undefined);
       }
     },
   }));
