@@ -1,4 +1,3 @@
-// import { DateTime } from "luxon";
 import { types } from "mobx-state-tree";
 
 const validateMail = (str: string): boolean => {
@@ -19,16 +18,16 @@ const User = types.model({
 
 export const RootStore = types
   .model({
-    name: types.string,
-    mail: types.string,
-    complaint: types.string,
+    name: types.maybe(types.string),
+    mail: types.maybe(types.string),
+    complaint: types.maybe(types.string),
     selectedType: types.maybeNull(
       types.enumeration(["Service related", "Product related"])
     ),
     createdAt: types.maybe(types.Date),
-    nameError: types.boolean,
-    mailError: types.boolean,
-    complaintError: types.boolean,
+    nameError: types.optional(types.boolean, false),
+    mailError: types.optional(types.boolean, false),
+    complaintError: types.optional(types.boolean, false),
     users: types.array(User),
   })
   .actions((self) => ({
@@ -60,7 +59,7 @@ export const RootStore = types
     setComplaintError(value: boolean) {
       self.complaintError = value;
     },
-    setSelectedType(value: string) {
+    setSelectedType(value: string | null) {
       self.selectedType = value;
     },
     setUsers(value: {
@@ -77,7 +76,10 @@ export const RootStore = types
 
       if (self.name === "") this.setNameError(true);
       if (self.mail === "") this.setMailError(true);
-      if (self.complaint === "" || self.complaint.length > 40)
+      if (
+        self.complaint &&
+        (self.complaint === "" || self.complaint.length > 40)
+      )
         this.setComplaintError(true);
 
       if (

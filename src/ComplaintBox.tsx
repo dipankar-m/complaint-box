@@ -11,7 +11,7 @@ import {
   useTypography,
 } from "@surya-digital/leo-reactjs-material-ui";
 import { useTranslation } from "react-i18next";
-// import { DateTime } from "luxon";
+import TicketDetails from "./TicketDetails";
 
 export const ComplaintBox = observer((): React.ReactElement => {
   const {
@@ -46,44 +46,24 @@ export const ComplaintBox = observer((): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem("name", name);
+    if (name !== undefined) window.localStorage.setItem("name", name);
   }, [name]);
   useEffect(() => {
-    window.localStorage.setItem("mail", mail);
+    if (mail !== undefined) window.localStorage.setItem("mail", mail);
   }, [mail]);
   useEffect(() => {
-    window.localStorage.setItem("complaint", complaint);
+    if (complaint !== undefined)
+      window.localStorage.setItem("complaint", complaint);
   }, [complaint]);
 
-  // let dt = DateTime.fromISO(createdAt)
-  //   .setLocale("en-GB")
-  //   .toLocaleString({ month: "long", day: "numeric", year: "numeric" });
-
   const displayUsers = users.map((user) => (
-    <li key={user.name}>
-      <Typography sx={{ typography: typography.c1 }}>
-        {t("name")}: {user.name}
-      </Typography>
-      <Typography sx={{ typography: typography.c1 }}>
-        {t("email")}: {user.mail}
-      </Typography>
-      <Typography sx={{ typography: typography.c1 }}>
-        {t("serviceType")}: {selectedType}
-      </Typography>
-      <Typography sx={{ typography: typography.c1 }}>
-        {t("complaint")}: {user.complaint}
-      </Typography>
-      <Typography sx={{ typography: typography.c1 }}>
-        Date:{" "}
-        {t("intlDate", {
-          val: createdAt,
-          formatParams: {
-            val: { year: "numeric", month: "short", day: "numeric" },
-          },
-        })}
-        {/* {t("intlDate", { createdAt })} */}
-      </Typography>
-    </li>
+    <Stack key={user.name}>
+      <TicketDetails info={t("displayName", { val: user.name })} />
+      <TicketDetails info={t("displayEmail", { val: user.mail })} />
+      <TicketDetails info={t("serviceType", { val: user.selectedType })} />
+      <TicketDetails info={t("displayComplaint", { val: user.complaint })} />
+      <TicketDetails info={t("intlDate", { createdAt })} />
+    </Stack>
   ));
 
   return (
@@ -133,7 +113,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
         <TextInputField
           isRequired
           name={"name"}
-          value={name}
+          value={name === undefined ? "" : name}
           type={"text"}
           onTextChange={(name) => setName(name)}
           label={t("name")}
@@ -143,7 +123,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
         <TextInputField
           isRequired
           name={"mail"}
-          value={mail}
+          value={mail === undefined ? "" : mail}
           type={"text"}
           onTextChange={(mail) => setMail(mail)}
           label={t("email")}
@@ -162,7 +142,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
         <TextAreaInputField
           isRequired
           name={"complaint"}
-          value={complaint}
+          value={complaint === undefined ? "" : complaint}
           onTextChange={(complaint) => setComplaint(complaint)}
           label={t("complaint")}
           error={complaintError}
@@ -179,12 +159,14 @@ export const ComplaintBox = observer((): React.ReactElement => {
           <Button
             size={"large"}
             variant={"filled"}
-            onClick={() => handleSubmit()}
+            onClick={handleSubmit}
             label={t("submit")}
             name={"submit-button"}
           />
         </Box>
-        <Typography sx={{ fontSize: spacing.spaceSM }}>**{t("tnc")}</Typography>
+        <Typography sx={{ fontSize: spacing.spaceSM, fontStyle: "italic" }}>
+          **{t("tnc")}
+        </Typography>
         <h3>{displayUsers.length > 0 ? `${t("tickets")}:` : ""}</h3>
         <Typography>{displayUsers}</Typography>
       </Stack>

@@ -1,5 +1,4 @@
 import i18next from "i18next";
-// import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
 
@@ -22,24 +21,27 @@ i18next
           subTitle: "Get assured resolution within 24 hours",
           tnc: "Excluding weekends and public holidays",
           tickets: "Active tickets",
-          intlDate: "{{val, datetime}}",
-          serviceType: "Service type",
+          intlDate: "Date:{{createdAt, IntlDate}}",
+          serviceType: "Service type:{{val}}",
+          displayName: "Name:{{val}}",
+          displayEmail: "Email:{{val}}",
+          displayComplaint: "Complaint:{{val}}",
         },
       },
     },
-    // interpolation: {
-    //   //  format : function(value: Date, format: string) {
-    //   // //   console.log("Hello");
-    //   //   if (format === "intlDate") {
-    //   //     return new Intl.DateTimeFormat("en-GB", {
-    //   //       day: "numeric",
-    //   //       month: "short",
-    //   //       year: "numeric",
-    //   //     }).format(value);
-    //   //   }
-    //   //   return value;
-    //   // },
-    // },
+    interpolation: {
+      format: function (value: Date, format: string | undefined): string {
+        console.log("Hello");
+        if (format === "IntlDate") {
+          return new Intl.DateTimeFormat("en-GB", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          }).format(value);
+        }
+        return value.toString();
+      },
+    },
   });
 
 export {};

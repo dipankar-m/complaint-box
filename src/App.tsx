@@ -15,15 +15,7 @@ export const useRootStore = () => {
 };
 
 const App = () => {
-  const rootStore = RootStore.create({
-    name: "",
-    mail: "",
-    complaint: "",
-    nameError: false,
-    mailError: false,
-    complaintError: false,
-    users: [],
-  });
+  const rootStore = RootStore.create();
   return (
     <ThemeConfig currentTheme={"light"} themes={[lightTheme, darkTheme]}>
       <MSTContext.Provider value={rootStore}>
