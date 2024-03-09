@@ -20,7 +20,7 @@ i18next
           title: "Complaint Box!",
           subTitle: "Get assured resolution within 24 hours",
           tnc: "Excluding weekends and public holidays",
-          tickets: "Active tickets",
+          tickets: "Active tickets:",
           intlDate: "Date:{{val, IntlDate}}",
           serviceType: "Service type:{{val}}",
           displayName: "Name:{{val}}",

@@ -114,7 +114,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
         <TextInputField
           isRequired
           name={"name"}
-          value={name === undefined ? "" : name}
+          value={name}
           type={"text"}
           onTextChange={(name) => setName(name)}
           label={t("name")}
@@ -124,7 +124,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
         <TextInputField
           isRequired
           name={"mail"}
-          value={mail === undefined ? "" : mail}
+          value={mail}
           type={"text"}
           onTextChange={(mail) => setMail(mail)}
           label={t("email")}
@@ -143,7 +143,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
         <TextAreaInputField
           isRequired
           name={"complaint"}
-          value={complaint === undefined ? "" : complaint}
+          value={complaint}
           onTextChange={(complaint) => setComplaint(complaint)}
           label={t("complaint")}
           error={complaintError}
@@ -168,7 +168,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
         <Typography sx={{ fontSize: spacing.spaceSM, fontStyle: "italic" }}>
           **{t("tnc")}
         </Typography>
-        <h3>{displayUsers.length > 0 ? `${t("tickets")}:` : ""}</h3>
+        <h3>{displayUsers.length > 0 ? `${t("tickets")}` : ""}</h3>
         <Typography>{displayUsers}</Typography>
       </Stack>
     </Container>
