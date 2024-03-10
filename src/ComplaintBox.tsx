@@ -109,7 +109,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
             mb: spacing.spaceXL,
           }}
         >
-          {t("subTitle")}**
+          {t("subTitle")}
         </Typography>
         <TextInputField
           isRequired
@@ -166,7 +166,7 @@ export const ComplaintBox = observer((): React.ReactElement => {
           />
         </Box>
         <Typography sx={{ fontSize: spacing.spaceSM, fontStyle: "italic" }}>
-          **{t("tnc")}
+          {t("tnc")}
         </Typography>
         <h3>{displayUsers.length > 0 ? `${t("tickets")}` : ""}</h3>
         <Typography>{displayUsers}</Typography>
